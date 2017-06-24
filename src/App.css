@@ -1,0 +1,102 @@
+.App {
+    text-align: center;
+}
+
+.App-logo {
+    animation: App-logo-spin infinite 20s linear;
+    height: 80px;
+}
+
+.App-header {
+    background-color: #222;
+    height: 150px;
+    padding: 20px;
+    color: white;
+}
+
+.App-intro {
+    font-size: large;
+    width: 100%;
+    display: flex;
+}
+
+.App-camera-live {
+    width: 70%;
+    position: relative;
+}
+
+.App-camera-tutorial {
+    width: 30%;
+    position: relative;
+}
+
+.App-camera-live .mask {
+    position: absolute;
+    top: 8%;
+    left: 34%;
+}
+
+.App-camera-live .mask .mask-rect-big {
+    width: 200px;
+    height: 400px;
+    border: 2px solid green;
+}
+
+.App-camera-live .mask .mask-rect-small {
+    width: 200px;
+    height: 200px;
+    border: 2px solid red;
+    position: absolute;
+    top: 27%;
+}
+
+.App-camera-tutorial .mask {
+    position: absolute;
+    top: 8%;
+    left: 34%;
+}
+
+.App-camera-tutorial .mask .mask-rect-big {
+    width: 70px;
+    height: 150px;
+    border: 2px solid green;
+}
+
+.App-camera-tutorial .mask .mask-rect-small {
+    width: 70px;
+    height: 70px;
+    border: 2px solid red;
+    position: absolute;
+    top: 27%;
+}
+
+.header-main {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height:100px;
+  background-color: #222;
+}
+
+.menu {
+  list-style: none;
+
+}
+.menu li {
+  float: left;
+  width: 100px;
+  text-align: center;
+}
+.menu li a {
+  color: white;
+  text-decoration: none;
+}
+@keyframes App-logo-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
