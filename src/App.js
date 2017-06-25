@@ -90,6 +90,9 @@ class App extends Component {
 					videoName: 4
 				});
 				break;
+
+			default:
+				break;
 		}
 	}
 
@@ -116,7 +119,7 @@ class App extends Component {
 				</div>
 				<div className="App-intro">
 					<video ref="video" src={`http://127.0.0.1:1337/?movie=${this.state.videoName}`} width="640" height="480" autoPlay controls></video>
-				
+
 					<button onClick={() => this.startStream()}>Strem video</button>
 					<button onClick={() => this.stopStream()}>Stop stream</button>
 					<button onClick={() => this.closeCamera()}>Close camera</button>
