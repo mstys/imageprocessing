@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Websocket from 'react-websocket';
+
 import logo from './logo.svg';
 import './App.css';
 
@@ -10,7 +10,8 @@ class Stream extends Component {
 
 		this.state = {
 			stream: false,
-			chunks: []
+			chunks: [],
+			path: null
 		}
 
 		this.canvas = document.createElement('canvas');
@@ -27,7 +28,7 @@ class Stream extends Component {
 		this.stream = this.stream.bind(this);
 		this.playRecorded = this.playRecorded.bind(this);
 		this.handleStop = this.handleStop.bind(this);
-		this.uploadVideo = this.uploadVideo.bind(this);
+
 	}
 
 	componentDidMount() {
@@ -50,10 +51,7 @@ class Stream extends Component {
 		// })
 	}
 
-	handleData(data) {
-		let result = JSON.parse(data);
-		this.setState({ count: this.state.count + result.movement });
-	}
+
 
 	uploadVideo() {
 		let type = 'video/webm';
@@ -99,10 +97,10 @@ class Stream extends Component {
 			chunk.push(event.data);
 
 			this.setState({
-				chunks: chunk
+				chunks: [event.data]
 			});
 
-			// console.log("Chunks", t	his.state.chunks);
+			console.log("Chunks", this.state.chunks);
 			// this.playRecorded();
 
 		}
@@ -184,7 +182,7 @@ class Stream extends Component {
 
 					setTimeout(() => {
 						this.mediaRecorder.stop();
-					}, 2000);
+					}, 4000);
 
 					console.log("Status mediaRecorder: ", this.mediaRecorder);
 				})
@@ -222,10 +220,7 @@ class Stream extends Component {
 							<div className="mask-rect-small"></div>
 						</div>
 					</div>
-					<div>
-						<Websocket url='ws://127.0.0.1:1337'
-							onMessage={this.handleData.bind(this)} />
-					</div>
+				
 				</div>
 			</div>
 		);

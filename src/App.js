@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Websocket from 'react-websocket';
 import logo from './logo.svg';
 import './App.css';
 
@@ -9,44 +10,18 @@ class App extends Component {
 
 		this.state = {
 			stream: false,
-			videoName: ""
+			videoName: "",
+			path: null
 		}
 
-		this.canvas = document.createElement('canvas');
-		this.canvas.width = 640;
-		this.canvas.height = 480;
-		this.ctx = this.canvas.getContext('2d');
-
+		this.handleData = this.handleData.bind(this);
+		this.renderPhoto = this.renderPhoto.bind(this);
 
 	}
 
 	componentDidMount() {
 
-		this.video = this.refs.video;
-		this.video.setAttribute('data-dashjs-player', '');
-		this.video.setAttribute('cors', '');
 
-		// if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-		// 	navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
-		// 		this.video.src = window.URL.createObjectURL(stream);
-		// 		this.video.play();
-		// 	})
-		// }
-
-		// fetch('http://127.0.0.1:1337/', {
-		// 	mode: 'no-cors',
-		// 	headers: {
-		// 		'Content-length': 100000,
-		// 		'Content-type':'video/mp4'
-		// 	}
-		// })
-		// .then((response)=>{
-		// 	console.log('Fetch respo ',  response);
-		// 	return response.blob();
-		// })
-		// .then((response)=>{
-		// 	console.log(response);
-		// })
 	}
 
 
@@ -68,46 +43,18 @@ class App extends Component {
 		})
 	}
 
-	setMovie(e) {
-		switch (e) {
-			case 1:
-				this.setState({
-					videoName: 1
-				});
-				break;
-			case 2:
-				this.setState({
-					videoName: 2
-				});
-				break;
-			case 3:
-				this.setState({
-					videoName: 3
-				});
-				break;
-			case 4:
-				this.setState({
-					videoName: 4
-				});
-				break;
+	handleData(data) {
+		console.log(JSON.parse(data));
+		let result = JSON.parse(data);
+		this.setState({ path: result.path });
+		console.log(this.state);
+	}
 
-			default:
-				break;
-		}
+	renderPhoto() {
+		return this.state.path.map(img => { console.log(img); return (<li><img src={`http://127.0.0.1:1337/uploads/screens?${img}`} /></li>) });
 	}
 
 
-	stream() {
-
-		if (this.state.stream === true) {
-
-			this.ctx.drawImage(this.video, 0, 0, 640, 480);
-			this.canvas.toDataURL();
-
-			console.log("Stream");
-			setTimeout(() => this.stream());
-		}
-	}
 
 
 	render() {
@@ -118,19 +65,21 @@ class App extends Component {
 					<h2>Stream partial movie over HTTP.</h2>
 				</div>
 				<div className="App-intro">
-					<video ref="video" src={`http://127.0.0.1:1337/?movie=${this.state.videoName}`} width="640" height="480" autoPlay controls></video>
 
-					<button onClick={() => this.startStream()}>Strem video</button>
-					<button onClick={() => this.stopStream()}>Stop stream</button>
-					<button onClick={() => this.closeCamera()}>Close camera</button>
 				</div>
 				<div className="App-list">
-					<ul>
-						<li><button onClick={() => this.setMovie(1)}>First Movie</button></li>
-						<li><button onClick={() => this.setMovie(2)}>Second Movie</button></li>
-						<li><button onClick={() => this.setMovie(3)}>Third Movie</button></li>
-						<li><button onClick={() => this.setMovie(4)}>Fth MPD</button></li>
-					</ul>
+					<div>
+						<Websocket url='ws://127.0.0.1:1337'
+							onMessage={this.handleData.bind(this)} />
+					</div>
+					<div>
+						{this.state.path &&
+							<ul>
+								{this.renderPhoto()}
+							</ul>
+						}
+
+					</div>
 				</div>
 			</div>
 		);
