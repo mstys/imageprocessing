@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Websocket from 'react-websocket';
 import logo from './logo.svg';
 import './App.css';
 
@@ -25,6 +26,7 @@ class Stream extends Component {
 		this.stopStream = this.stopStream.bind(this);
 		this.stream = this.stream.bind(this);
 		this.playRecorded = this.playRecorded.bind(this);
+		this.handleStop = this.handleStop.bind(this);
 		this.uploadVideo = this.uploadVideo.bind(this);
 	}
 
@@ -46,6 +48,11 @@ class Stream extends Component {
 		// .then((response)=>{
 		// 	console.log(response);
 		// })
+	}
+
+	handleData(data) {
+		let result = JSON.parse(data);
+		this.setState({ count: this.state.count + result.movement });
 	}
 
 	uploadVideo() {
@@ -93,12 +100,29 @@ class Stream extends Component {
 
 			this.setState({
 				chunks: chunk
-			})
+			});
 
-			console.log("Chunks", this.state.chunks);
-			this.playRecorded();
+			// console.log("Chunks", t	his.state.chunks);
+			// this.playRecorded();
 
 		}
+	}
+
+	handleStop() {
+
+		let file = new File(this.state.chunks, "sample.webm", {
+			type: 'video/webm'
+		});
+
+		let request = new XMLHttpRequest();
+		request.open('POST', 'http://127.0.0.1:1337/upload');
+
+		let formData = new FormData();
+		formData.append('file', file);
+
+		request.send(formData);
+
+		this.stream();
 	}
 
 	startStream() {
@@ -114,6 +138,11 @@ class Stream extends Component {
 
 	stopStream() {
 		this.mediaRecorder.stop();
+		this.setState({
+			stream: false
+		});
+
+
 	}
 
 	playRecorded() {
@@ -150,7 +179,12 @@ class Stream extends Component {
 					let mediaRecorder = new MediaRecorder(stream, options);
 					this.mediaRecorder = mediaRecorder;
 					this.mediaRecorder.ondataavailable = this.handleDataAvailable;
+					this.mediaRecorder.onstop = this.handleStop;
 					this.mediaRecorder.start();
+
+					setTimeout(() => {
+						this.mediaRecorder.stop();
+					}, 2000);
 
 					console.log("Status mediaRecorder: ", this.mediaRecorder);
 				})
@@ -187,6 +221,10 @@ class Stream extends Component {
 							<div className="mask-rect-big"></div>
 							<div className="mask-rect-small"></div>
 						</div>
+					</div>
+					<div>
+						<Websocket url='ws://127.0.0.1:1337'
+							onMessage={this.handleData.bind(this)} />
 					</div>
 				</div>
 			</div>
